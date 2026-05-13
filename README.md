@@ -60,7 +60,7 @@ export STACKMINT_GATEWAY_API_KEY="your_gateway_api_key"
 By default, the client sends data to:
 
 ```text
-http://127.0.0.1:5173/api
+https://app.stackmint.ai/api
 ```
 
 You can override this with:
