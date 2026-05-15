@@ -152,5 +152,4 @@ Planned connector directions include:
 
 ## License
 
-This project is intended to be open source. Add the repository license before
-publishing or distributing it.
+This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
