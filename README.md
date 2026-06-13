@@ -41,6 +41,32 @@ LangChain is the first supported connector, not the final scope of the project.
 The core gateway models already include framework values for `langchain`,
 `crewai`, `claude`, `openai`, `autogen`, and `custom`.
 
+## Stackmint vs. Observability Tools (LangSmith, Braintrust)
+
+LangSmith, Braintrust, and similar observability platforms are excellent for debugging, evaluation, tracing, and post-run analysis. Stackmint Gateway is designed for a different layer of the agent stack: runtime governance.
+
+The architectural distinction is simple:
+
+- **Standard observability is reactive:** trace what the agent did in the past.
+- **Stackmint governance is proactive:** control what the agent is allowed to do right now.
+
+| Capability | Standard Observability | Stackmint Governance |
+|---|---|---|
+| Primary role | Reactive tracing, debugging, evaluation, and experiment analysis after an agent run. | Proactive governance layer for agent identity, tools, budgets, approvals, execution state, and runtime policy. |
+| Runtime control | Usually observes agent behavior without deciding whether the agent should continue, pause, or be blocked. | Models agent and tool status directly with states such as `active`, `blocked`, and `suspended`, plus execution states such as `waiting_approval`, `blocked`, `canceled`, `failed`, and `completed`. |
+| Human-in-the-Loop gates | Can help review traces or annotate outputs after execution. | Exposes governance fields such as `hitl_conditions` and `require_approval_for`, allowing approval requirements to be represented as part of the agent configuration. |
+| Budget enforcement | Typically reports cost, latency, token usage, or evaluation metrics after the fact. | Includes `budget_ceiling_cents` in the agent configuration surface so budget limits can be attached to governed agents instead of only analyzed later. |
+| Tool governance | Often shows which tools were called during a trace. | Syncs permitted tools through `sync_tools(...)`, supports `permitted_tool_slugs`, and stores tool status so the governance layer can reason about which tools an agent may use. |
+| Circuit breakers | Useful for detecting failures, regressions, or unsafe behavior once telemetry has been collected. | Represents circuit-breaker behavior in the governance model through blocked/suspended agent states, blocked/canceled execution states, and failed execution reporting. |
+| Failure mode | Observability outages usually affect trace visibility, but not the agent runtime itself. | The LangChain `GovernedAgent` supports `fail_open=True` by default, so telemetry or gateway sync failures do not break the underlying agent execution path unless the developer opts into strict failure behavior. |
+
+Stackmint Gateway can still emit execution records for observability-style workflows, including successful and failed runs through `record_execution(...)`. The difference is that execution telemetry is not the final product. It is part of a broader governance contract: agent configuration, permitted tools, HITL policy, budget ceilings, execution status, and fail-open runtime behavior are all modeled explicitly.
+
+In practice, Stackmint Gateway can be used alongside LangSmith, Braintrust, or another tracing platform:
+
+- Use **LangSmith or Braintrust** to inspect traces, evaluate prompts, debug regressions, and analyze quality.
+- Use **Stackmint Gateway** to attach governance policy to the agent runtime: budgets, approvals, tool permissions, execution state, and operational circuit breakers.
+
 ## Installation
 
 This project uses Python 3.13 and `uv`.
