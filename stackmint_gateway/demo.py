@@ -352,7 +352,7 @@ def _build_local_demo(provider: str) -> tuple[list[GatewayEvent], dict[str, int]
     sanitized = sanitize_payload(
         {
             "email": "person@example.com",
-            "api_key": "sk-proj-demo-secret",
+            "api_key": "sk-proj-demo-secret",  # pragma: allowlist secret
         }
     )
     events.extend(
@@ -384,7 +384,7 @@ def _build_mock_control_plane_demo(
     sanitized = sanitize_payload(
         {
             "email": "person@example.com",
-            "api_key": "sk-proj-demo-secret",
+            "api_key": "sk-proj-demo-secret",  # pragma: allowlist secret
         }
     )
     events = [

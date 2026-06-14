@@ -69,6 +69,9 @@ CHECK_COMMANDS = [
     "uv run python -m build",
     "uv run twine check dist/*",
 ]
+DETECT_SECRETS_BASELINE_NOTE = (
+    "# Do not commit timestamp-only .secrets.baseline churn."
+)
 MCP_TOOLS = [
     "stackmint_get_agent_policy",
     "stackmint_authorize_execution",
@@ -113,6 +116,17 @@ HELP_GLOBAL_OPTIONS = [
     ("--json", "Return machine-readable JSON where supported"),
     ("--debug", "Show tracebacks for debugging"),
 ]
+TOP_LEVEL_COMMANDS = {
+    "version",
+    "doctor",
+    "demo",
+    "init",
+    "mcp",
+    "example",
+    "check",
+    "help",
+}
+GLOBAL_FLAG_NAMES = {"--no-splash", "--quiet", "--no-color", "--json", "--debug"}
 
 
 def main(
@@ -127,6 +141,9 @@ def main(
     help_result = _maybe_handle_help_request(raw_argv, stdout=out, stderr=err)
     if help_result is not None:
         return help_result
+    invalid_command = _invalid_top_level_command(raw_argv)
+    if invalid_command is not None:
+        return _unknown_command_error(invalid_command, raw_argv, stdout=out, stderr=err)
     args: argparse.Namespace | None = None
     try:
         args = _build_parser().parse_args(raw_argv)
@@ -323,6 +340,52 @@ def _dispatch(args: argparse.Namespace, *, stdout: TextIO, stderr: TextIO) -> in
     if command == "check":
         return _command_check(args, stdout)
     _print_event(gateway_event("error", f"Unknown command: {command}"), args, stderr)
+    return 2
+
+
+def _invalid_top_level_command(argv: list[str]) -> str | None:
+    for item in argv:
+        if item in GLOBAL_FLAG_NAMES:
+            continue
+        if item.startswith("-"):
+            return None
+        if item not in TOP_LEVEL_COMMANDS:
+            return item
+        return None
+    return None
+
+
+def _unknown_command_error(
+    command: str,
+    argv: list[str],
+    *,
+    stdout: TextIO,
+    stderr: TextIO,
+) -> int:
+    if "--json" in argv:
+        _write_json(
+            {
+                "ok": False,
+                "command": command,
+                "error": {
+                    "code": "unknown_command",
+                    "message": f"Unknown command: {command}",
+                },
+                "events": _event_dicts(
+                    [
+                        gateway_event("error", f"Unknown command: {command}"),
+                        gateway_event(
+                            "info",
+                            "Run `stackmint help` to see available commands.",
+                        ),
+                    ]
+                ),
+            },
+            stdout,
+        )
+        return 2
+    print(f"[ERROR] Unknown command: {command}", file=stderr)
+    print("[INFO] Run `stackmint help` to see available commands.", file=stderr)
     return 2
 
 
@@ -1371,6 +1434,8 @@ def _command_check(args: argparse.Namespace, stdout: TextIO) -> int:
     )
     for command in CHECK_COMMANDS:
         print(command, file=stdout)
+        if command == "uv run detect-secrets scan --baseline .secrets.baseline":
+            print(DETECT_SECRETS_BASELINE_NOTE, file=stdout)
     return 0
 
 

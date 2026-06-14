@@ -848,6 +848,7 @@ uv run pytest
 uv run bandit --ini .bandit -r stackmint_gateway examples tests
 uv run pip-audit
 uv run detect-secrets scan --baseline .secrets.baseline
+# Do not commit timestamp-only .secrets.baseline churn.
 uv run stackmint demo --no-splash --no-delay
 uv run stackmint demo --json
 uv run stackmint doctor --no-splash
@@ -860,6 +861,9 @@ uv run twine check dist/*
 
 Bandit scans runtime/example code using `.bandit` exclusions; tests are not
 treated as production code for Bandit findings.
+If `detect-secrets` changes only `.secrets.baseline` timestamp metadata, restore
+that file before release. Review any new findings intentionally before updating
+the baseline.
 
 ## Roadmap
 

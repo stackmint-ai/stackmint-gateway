@@ -15,6 +15,8 @@
   - Bandit scans runtime/example code using `.bandit` exclusions; tests are not treated as production code for Bandit findings.
 - [ ] Run `uv run pip-audit`.
 - [ ] Run `uv run detect-secrets scan --baseline .secrets.baseline`.
+- [ ] If only timestamp metadata changed in `.secrets.baseline`, restore it before release.
+- [ ] If new findings appear, review them intentionally before updating the baseline.
 - [ ] Run `uv run stackmint version`.
 - [ ] Run `uv run stackmint doctor --no-splash`.
 - [ ] Run `uv run stackmint doctor --json`.

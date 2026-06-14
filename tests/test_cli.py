@@ -156,6 +156,38 @@ def test_invalid_help_topic_is_clean_error(
     assert "Traceback" not in stderr
 
 
+def test_invalid_top_level_command_is_clean_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    code, stdout, stderr = run_cli(["definitely-not-a-command"], monkeypatch)
+
+    assert code == 2
+    assert stdout == ""
+    assert "[ERROR] Unknown command: definitely-not-a-command" in stderr
+    assert "[INFO] Run `stackmint help` to see available commands." in stderr
+    assert "usage:" not in stderr
+    assert "Traceback" not in stderr
+
+
+def test_invalid_top_level_command_json_is_structured(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    code, stdout, stderr = run_cli(
+        ["--json", "definitely-not-a-command"],
+        monkeypatch,
+    )
+
+    assert code == 2
+    assert stderr == ""
+    payload = json.loads(stdout)
+    assert payload["ok"] is False
+    assert payload["error"]["code"] == "unknown_command"
+    assert (
+        payload["events"][0]["message"]
+        == "Unknown command: definitely-not-a-command"
+    )
+
+
 def test_demo_no_splash_runs_without_provider_keys(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -942,6 +974,7 @@ def test_check_print_includes_release_verification_commands(
     assert "uv run stackmint help" in stdout
     assert "uv run python -m build" in stdout
     assert "uv run twine check dist/*" in stdout
+    assert "Do not commit timestamp-only .secrets.baseline churn." in stdout
 
 
 def test_demo_help_does_not_add_live_or_dashboard_modes(

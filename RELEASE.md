@@ -63,6 +63,7 @@ uv run pytest
 uv run bandit --ini .bandit -r stackmint_gateway examples tests
 uv run pip-audit
 uv run detect-secrets scan --baseline .secrets.baseline
+# Do not commit timestamp-only .secrets.baseline churn.
 uv run stackmint demo --no-splash --no-delay
 uv run stackmint demo --json
 uv run stackmint doctor --no-splash
@@ -78,10 +79,10 @@ Result for this `v0.1.0-alpha` preparation pass:
 - `uv sync --extra dev`: passed.
 - `uv run ruff check .`: passed.
 - `uv run python -m compileall stackmint_gateway examples tests`: passed.
-- `uv run pytest`: passed, `180 passed`.
+- `uv run pytest`: passed, `183 passed`.
 - `uv run bandit --ini .bandit -r stackmint_gateway examples tests`: passed, no issues identified. Bandit scans runtime/example code using `.bandit` exclusions.
 - `uv run pip-audit`: passed, no known vulnerabilities found.
-- `uv run detect-secrets scan --baseline .secrets.baseline`: passed.
+- `uv run detect-secrets scan --baseline .secrets.baseline`: passed. Timestamp-only `.secrets.baseline` churn should be restored before release; new findings should be reviewed intentionally.
 - `uv run stackmint demo --no-splash --no-delay`: passed.
 - `uv run stackmint demo --json`: passed.
 - `uv run stackmint doctor --no-splash`: passed.

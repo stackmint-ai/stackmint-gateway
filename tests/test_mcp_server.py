@@ -193,7 +193,7 @@ def test_mcp_config_loads_from_environment(monkeypatch) -> None:
 
     loaded = StackmintMCPConfig.from_env()
 
-    assert loaded.api_key == "token-value"
+    assert loaded.api_key == "token-value"  # pragma: allowlist secret
     assert loaded.base_url == "http://example.test/api"
     assert loaded.read_only is True
     assert loaded.require_confirmation is False
