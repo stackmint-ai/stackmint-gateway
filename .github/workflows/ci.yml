@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: uv sync --extra dev --extra mcp
+
+      - run: uv run ruff check .
+
+      - run: uv run python -m compileall stackmint_gateway examples tests
+
+      - run: uv run pytest
+
+      - run: uv run bandit --ini .bandit -r stackmint_gateway examples tests
+
+      - run: uv run pip-audit
+
+      - run: uv run detect-secrets scan --baseline .secrets.baseline
+
+      - run: uv run python -m build
+
+      - run: uv run twine check dist/*

@@ -1,10 +1,139 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
 [project]
 name = "stackmint-gateway"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.1.0a1"
+description = "Open-source Python gateway for AI agent governance, telemetry, budgets, HITL approvals, and runtime controls."
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-    "langchain>=1.3.0",
-    "langchain-cerebras>=0.8.2",
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Stackmint", email = "hello@stackmint.ai" },
 ]
+keywords = [
+    "ai-agents",
+    "governance",
+    "langchain",
+    "observability",
+    "telemetry",
+    "hitl",
+    "agent-runtime",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "pydantic>=2",
+    "requests>=2.31",
+    "langchain-core>=1.4.0",
+]
+
+[project.urls]
+Homepage = "https://stackmint.ai"
+Repository = "https://github.com/stackmint-ai/stackmint-gateway"
+Issues = "https://github.com/stackmint-ai/stackmint-gateway/issues"
+
+[project.scripts]
+stackmint = "stackmint_gateway.cli:main"
+stackmint-gateway = "stackmint_gateway.cli:main"
+
+[project.optional-dependencies]
+langchain = [
+    "langchain>=1.3.0",
+]
+examples = [
+    "langchain>=1.3.0",
+]
+examples-openai = [
+    "langchain>=1.3.0",
+    "langchain-openai",
+]
+examples-anthropic = [
+    "langchain>=1.3.0",
+    "langchain-anthropic",
+]
+examples-cerebras = [
+    "langchain>=1.3.0",
+    "langchain-cerebras>=0.8.2; python_version >= '3.11' and python_version < '3.13'",
+]
+examples-all = [
+    "langchain>=1.3.0",
+    "langchain-openai",
+    "langchain-anthropic",
+    "langchain-cerebras>=0.8.2; python_version >= '3.11' and python_version < '3.13'",
+]
+mcp = [
+    "mcp>=1.0",
+]
+dev = [
+    "pytest>=8",
+    "ruff>=0.8",
+    "bandit>=1.7",
+    "pip-audit>=2.7",
+    "detect-secrets>=1.5",
+    "build>=1.2",
+    "twine>=5",
+]
+
+[tool.hatch.build.targets.wheel]
+only-include = [
+    "stackmint_gateway",
+    "examples",
+    "core.py",
+    "security.py",
+    "langchain_connector.py",
+]
+
+[tool.hatch.build.targets.wheel.force-include]
+"stackmint_gateway/assets/stackmint_terminal_splash.txt" = "stackmint_gateway/assets/stackmint_terminal_splash.txt"
+"stackmint_gateway/assets/stackmint_terminal_splash.ansi" = "stackmint_gateway/assets/stackmint_terminal_splash.ansi"
+"stackmint_gateway/assets/stackmint_terminal_splash.cast" = "stackmint_gateway/assets/stackmint_terminal_splash.cast"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "stackmint_gateway",
+    "examples",
+    "tests",
+    "core.py",
+    "security.py",
+    "langchain_connector.py",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "RELEASE.md",
+    "RELEASE_CHECKLIST.md",
+    "pyproject.toml",
+]
+exclude = [
+    ".env",
+    ".env.*",
+    ".DS_Store",
+    "__pycache__",
+    "*.pyc",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".mypy_cache",
+    ".coverage",
+    "htmlcov",
+    "dist",
+    "build",
+    "*.egg-info",
+    ".venv",
+    ".secrets.baseline",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
