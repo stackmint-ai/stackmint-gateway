@@ -1,15 +1,12 @@
 # Stackmint Gateway
 
-> Status: `v0.1.0-alpha`. This SDK is ready for early developer testing and
-> feedback. It is not a standalone centralized authorization gateway; optional
-> control-plane client hooks require compatible Stackmint backend endpoints.
+> Status: `v0.1.0-alpha`. This SDK is ready for early developer testing and feedback.
 
-> Package status: alpha. TestPyPI validation is recommended before publishing to
-> PyPI.
+Stackmint Gateway is the open-source Python SDK from [Stackmint](https://stackmint.ai/en), the AI Capability Cloud for agencies, systems integrators, and enterprises that need to package, govern, operate, and monetize AI capabilities.
 
-Stackmint Gateway is an open-source Python SDK for AI agent governance. It helps
-developers connect agent runtimes to a governance layer where agent identity,
-configuration, tools, budgets, approvals, and execution state can be tracked.
+Gateway helps developers connect LangChain agents and other agent runtimes to governance controls for agent identity, configuration, tools, budgets, approvals, and execution state.
+
+Looking for the managed platform? Visit [stackmint.ai](https://stackmint.ai/en).
 
 ## What It Is
 
