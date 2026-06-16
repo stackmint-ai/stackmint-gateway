@@ -8,7 +8,7 @@ Gateway helps developers connect LangChain agents and other agent runtimes to go
 
 Looking for the managed platform? Visit [stackmint.ai](https://stackmint.ai/en).
 
-## What It Is
+## What Stackmint Gateway Does
 
 Stackmint Gateway connects AI agents to runtime governance controls. The first
 connector is LangChain, exposed through `GovernedAgent`, which wraps any
